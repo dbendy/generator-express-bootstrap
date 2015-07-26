@@ -120,12 +120,12 @@ module.exports = yeoman.generators.Base.extend({
 
 		copyServer: function () {
 			this.log("Copying server.js...");
-			this.fs.copy(this.sourceRoot() + '_server.js', this.destinationRoot() + 'server.js');
+			this.fs.copy(this.sourceRoot() + '/_server.js', this.destinationRoot() + '/server.js');
 		}
 	},
 
 	install: {
-		runFirstNpmInstall: function() {
+		runNpmInstall: function() {
 			this.log("Running first npm install...");
 			this.npmInstall();
 		}
