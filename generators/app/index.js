@@ -76,7 +76,7 @@ module.exports = yeoman.generators.Base.extend({
 
 			this.log("Creating package configs...");
 
-			this.pkg = this.fs.readJSON(this.sourceRoot() + '/_package.json');
+			this.pkg = this.fs.readJSON(this.sourceRoot() + '/../_package.json');
 
 			var userInput = {
 				"name": this.appName,
@@ -100,33 +100,21 @@ module.exports = yeoman.generators.Base.extend({
 			});
 		},
 
-		copyGitIgnore: function () {
-			this.log("Copying .gitignore...");
-			this.fs.copy(this.sourceRoot() + '/_.gitignore', this.destinationRoot() + '/.gitignore');
-		},
+		copyingFiles: function () {
+			this.log("Copying files...");
+			this.fs.copy(this.sourceRoot(), this.destinationRoot());
+			var self = this;
 
-		copyEditorConfig: function () {
-			this.log("Copying .editorconfig...");
-			this.fs.copy(this.sourceRoot() + '/_.editorconfig', this.destinationRoot() + '/.editorconfig');
-		},
+			[
+				'.editorconfig',
+				'.gitignore',
+				'.eslintrc'
+			].forEach(function(file) {
+				self.fs.copy(self.sourceRoot() + '/' + file, self.destinationRoot() + '/' + file);
+			});
 
-		copyEslintrc: function () {
-			this.log("Copying .eslintrc...");
-			this.fs.copy(this.sourceRoot() + '/_.eslintrc', this.destinationRoot() + '/.eslintrc');
-		},
-
-		copyDefaultConfig: function () {
-			this.log("Copying config/default.js...");
-			this.fs.copy(this.sourceRoot() + '/config/_default.json', this.destinationRoot() + '/config/default.json');
-			this.fs.copy(this.sourceRoot() + '/config/_dev.json', this.destinationRoot() + '/config/dev.json');
-			this.fs.copy(this.sourceRoot() + '/config/_prod.json', this.destinationRoot() + '/config/prod.json');
-
-		},
-
-		copyServer: function () {
-			this.log("Copying server.js...");
-			this.fs.copy(this.sourceRoot() + '/_server.js', this.destinationRoot() + '/server.js');
 		}
+
 	},
 
 	install: {
@@ -140,11 +128,12 @@ module.exports = yeoman.generators.Base.extend({
 
 		addAppNameToConfig: function () {
 			this.log("Adding app name to config...");
-			var pathToConfig = this.destinationRoot() + '/config/default.json';
-			var appConfig = this.fs.readJSON(pathToConfig);
-			appConfig.APP_NAME = this.appName;
+			var pathToConfig = this.destinationRoot() + '/config/default.js';
+			var appConfig = require(pathToConfig);
 			fs.unlinkSync(pathToConfig);
-			this.fs.writeJSON(pathToConfig, appConfig);
+			appConfig.APP_NAME = this.appName;
+			var configString = 'module.exports = \n' + JSON.stringify(appConfig, null, 2) + ';\n';
+			this.fs.write(pathToConfig, configString);
 		},
 
 		startApp: function() {

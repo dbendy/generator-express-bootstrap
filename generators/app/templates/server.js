@@ -2,12 +2,12 @@ var express = require('express');
 var config = require('config');
 var bodyParser = require('body-parser');
 var nunjucks = require('nunjucks');
-
 var name = config.get('APP_NAME');
 var port = config.get('DEFAULT_PORT');
 var templatesDir = config.get('DEFAULT_TEMPLATES_DIR');
 var app = express();
 var server;
+var nunjucksEnv;
 
 // Set up body parser
 app.use(bodyParser.urlencoded({extended: false}));
@@ -18,24 +18,23 @@ app.use(require('express-bunyan-logger')());
 app.use(require('express-bunyan-logger').errorLogger());
 
 // Set up templating with Nunjucks
-nunjucks.configure(templatesDir, {
-	autoescape: true,
-	express: app,
+nunjucksEnv = nunjucks.configure(templatesDir, {
+  autoescape: true,
+  express: app,
 });
 
 // set up route.  Best to use Routers in other files.
-app.get('/', function helloWorld(req, res) {
-	res.send('Hello World!');
-});
+app.get('/', require('./lib/controllers/helloController'));
 
 // set up error handling for app
-app.use(function errorHandler(err, req, res, next) {
-	req.log.error(err);
-	res.status(500).send(err.stack);
-	next();
+app.use(function(err, req, res, next) {
+  req.log.error(err);
+  res.status(500).send(err.stack);
+  next();
 });
 
+// start server
 server = app.listen(port, function startServer() {
-	var host = server.address().address;
-	console.log(name + ' app listening at http://%s:%s', host, port);
+  var host = server.address().address;
+  console.log(name + ' app listening at http://%s:%s', host, port);
 });
