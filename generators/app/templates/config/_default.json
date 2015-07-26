@@ -3,3 +3,4 @@
 	"DEFAULT_PORT": 3000,
 	"DEFAULT_TEMPLATES_DIR": "/views/templates/"
 }
+

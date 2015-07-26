@@ -110,6 +110,11 @@ module.exports = yeoman.generators.Base.extend({
 			this.fs.copy(this.sourceRoot() + '/_.editorconfig', this.destinationRoot() + '/.editorconfig');
 		},
 
+		copyEslintrc: function () {
+			this.log("Copying .eslintrc...");
+			this.fs.copy(this.sourceRoot() + '/_.eslintrc', this.destinationRoot() + '/.eslintrc');
+		},
+
 		copyDefaultConfig: function () {
 			this.log("Copying config/default.js...");
 			this.fs.copy(this.sourceRoot() + '/config/_default.json', this.destinationRoot() + '/config/default.json');
@@ -137,7 +142,7 @@ module.exports = yeoman.generators.Base.extend({
 			this.log("Adding app name to config...");
 			var pathToConfig = this.destinationRoot() + '/config/default.json';
 			var appConfig = this.fs.readJSON(pathToConfig);
-			appConfig.appName = this.appName;
+			appConfig.APP_NAME = this.appName;
 			fs.unlinkSync(pathToConfig);
 			this.fs.writeJSON(pathToConfig, appConfig);
 		},

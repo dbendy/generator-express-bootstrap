@@ -4,8 +4,8 @@ var bodyParser = require('body-parser');
 var nunjucks = require('nunjucks');
 
 var name = config.get('APP_NAME');
-var port = config.get('PORT');
-var templatesDir = config.get('TEMPLATES_DIR');
+var port = config.get('DEFAULT_PORT');
+var templatesDir = config.get('DEFAULT_TEMPLATES_DIR');
 var app = express();
 var server;
 

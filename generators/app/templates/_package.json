@@ -17,7 +17,6 @@
 
   },
   "devDependencies": {
-    "airbnb-style": "^2.0.0",
     "eslint": "^0.24.1",
     "npm-shrinkwrap": "^5.4.0",
     "mocha": "^2.2.5",
