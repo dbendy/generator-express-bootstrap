@@ -17,6 +17,9 @@ app.use(bodyParser.json());
 app.use(require('express-bunyan-logger')());
 app.use(require('express-bunyan-logger').errorLogger());
 
+// set up static path to bootstrap
+app.use(express.static('./node_modules/bootstrap/dist/'));
+
 // Set up templating with Nunjucks
 nunjucksEnv = nunjucks.configure(templatesDir, {
   autoescape: true,
