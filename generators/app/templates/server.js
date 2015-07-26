@@ -37,7 +37,7 @@ app.use(function(err, req, res, next) {
 });
 
 // start server
-server = app.listen(port, function startServer() {
+server = app.listen(port, function() {
   var host = server.address().address;
   console.log(name + ' app listening at http://%s:%s', host, port);
 });
