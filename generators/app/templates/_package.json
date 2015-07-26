@@ -1,0 +1,18 @@
+{
+  "name": "name",
+  "version": "0.0.0",
+  "description": "",
+  "scripts": {
+    "lint": "eslint ./",
+    "test": "",
+    "shrinkwrap": "npm-shrinkwrap"
+  },
+  "author": "",
+  "dependencies": {
+  },
+  "devDependencies": {
+    "airbnb-style": "^2.0.0",
+    "eslint": "^0.24.1",
+    "npm-shrinkwrap": "^5.4.0"
+  }
+}
