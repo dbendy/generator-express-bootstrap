@@ -2,6 +2,7 @@
 
 ## Getting started
 
+Bored of creating boilerplate every time you need a new app?  Here is an easy way to create an express app that is ready to go with bootstrap.
 ### Install yeoman and generator
 
 ```bash
@@ -25,6 +26,7 @@ cd <directory for new app>
 ```bash
 yo express-bootstrap
 ```
+And now, you are ready to fly.
 ### About your new app
 Out of the box, your app comes with:
 - `.gitignore` for node.
