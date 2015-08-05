@@ -18,7 +18,7 @@ module.exports = yeoman.generators.Base.extend({
 	initializing: {
 		welcome: function () {
 			// Have Yeoman greet the user.
-			this.log(yosay('Welcome to the Express-Bootsstrap 2.0 app generator!'));
+			this.log(yosay('Welcome to Daniel Bendavid\'s Express-Bootsstrap app generator!'));
 		}
 	},
 
@@ -72,47 +72,37 @@ module.exports = yeoman.generators.Base.extend({
 	},
 
 	configuring: {
-		createPackage: function () {
-
-			this.log("Creating package configs...");
-
-			this.pkg = this.fs.readJSON(this.sourceRoot() + '/../_package.json');
-
-			var userInput = {
-				"name": this.appName,
-				"description": this.description,
-				"author": this.author
-			};
-			this.pkg = _.extend(this.pkg, userInput);
-		}
 	},
 
 	writing: {
 
 		writePackage: function () {
-
-			var done = this.async();
 			this.log("Writing package.json...");
-			var destination = this.destinationRoot() + '/package.json';
-			fs.writeFile(destination, JSON.stringify(this.pkg, null, 2), function(err) {
-				if (err) handleError(err);
-				done();
-			});
+			var source = this.templatePath('../_package.json');
+			var destination = this.destinationPath('package.json');
+			var data = {
+				appName: this.appName,
+				description: this.description,
+				author: this.author
+			};
+			this.fs.copyTpl(source, destination, data);
+		},
+
+		writingConfig: function() {
+			this.log("Writing config.js...");
+			var source = this.templatePath('../_config.js');
+			var destination = this.destinationPath('config.js');
+			this.fs.copyTpl(source, destination, {appName: this.appName});
 		},
 
 		copyingFiles: function () {
 			this.log("Copying files...");
-			this.fs.copy(this.sourceRoot(), this.destinationRoot());
+			// this is necessary so that files that start with dot (.) are not ignored
+			var templateContents = fs.readdirSync(this.sourceRoot());
 			var self = this;
-
-			[
-				'.editorconfig',
-				'.gitignore',
-				'.eslintrc'
-			].forEach(function(file) {
-				self.fs.copy(self.sourceRoot() + '/' + file, self.destinationRoot() + '/' + file);
+			templateContents.forEach(function(file) {
+				self.fs.copy(self.templatePath(file), self.destinationPath(file));
 			});
-
 		}
 
 	},
@@ -125,17 +115,6 @@ module.exports = yeoman.generators.Base.extend({
 	},
 
 	end: {
-
-		addAppNameToConfig: function () {
-			this.log("Adding app name to config...");
-			var pathToConfig = this.destinationRoot() + '/config/default.js';
-			var appConfig = require(pathToConfig);
-			fs.unlinkSync(pathToConfig);
-			appConfig.APP_NAME = this.appName;
-			var configString = 'module.exports = \n' + JSON.stringify(appConfig, null, 2) + ';\n';
-			this.fs.write(pathToConfig, configString);
-		},
-
 		startApp: function() {
 			this.log("Starting app...");
 			this.log("Open up your browser and go to 127.0.0.1:3000");

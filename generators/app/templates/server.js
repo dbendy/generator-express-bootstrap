@@ -1,10 +1,12 @@
+var logger = require('./lib/logger');
+var config = require('./config');
 var express = require('express');
-var config = require('config');
 var bodyParser = require('body-parser');
 var nunjucks = require('nunjucks');
-var name = config.get('APP_NAME');
-var port = config.get('DEFAULT_PORT');
-var templatesDir = config.get('DEFAULT_TEMPLATES_DIR');
+var expressBunyanLogger = require('express-bunyan-logger');
+var routes = require('./lib/routes');
+var _ = require('lodash');
+var assert = require('assert');
 var app = express();
 var server;
 var nunjucksEnv;
@@ -14,20 +16,22 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
 // Set up logging with Bunyan
-app.use(require('express-bunyan-logger')());
-app.use(require('express-bunyan-logger').errorLogger());
+app.use(expressBunyanLogger());
+app.use(expressBunyanLogger.errorLogger());
 
 // set up static path to bootstrap
 app.use(express.static('./node_modules/bootstrap/dist/'));
 
 // Set up templating with Nunjucks
-nunjucksEnv = nunjucks.configure(templatesDir, {
+nunjucksEnv = nunjucks.configure(config.DEFAULT_TEMPLATES_DIR, {
   autoescape: true,
-  express: app,
+  express: app
 });
 
-// set up route.  Best to use Routers in other files.
-app.get('/', require('./lib/controllers/helloController'));
+_.forOwn(routes, function(handler, path) {
+  assert(typeof handler === 'function', 'All handlers must be functions.');
+  app.use(path, handler);
+});
 
 // set up error handling for app
 app.use(function(err, req, res, next) {
@@ -37,7 +41,8 @@ app.use(function(err, req, res, next) {
 });
 
 // start server
-server = app.listen(port, function() {
+server = app.listen(config.DEFAULT_PORT, function() {
   var host = server.address().address;
-  console.log(name + ' app listening at http://%s:%s', host, port);
+  var port = server.address().port;
+  logger.info('%s application listening at http://%s:%s ', config.APP_NAME, host, port);
 });
